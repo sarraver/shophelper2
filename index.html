@@ -125,7 +125,10 @@
     <script>
       const tg = window.Telegram ? window.Telegram.WebApp : null;
       if (tg) {
+        tg.ready();
         tg.expand();
+        tg.MainButton.setText("🛒 Сформировать заказ");
+        tg.MainButton.show();
       }
 
       const rawProducts = [
@@ -192,7 +195,7 @@
         container.appendChild(itemDiv);
       });
 
-      document.getElementById("submit-data").addEventListener("click", () => {
+      function submitOrder() {
         const selectedItems = new Array();
         document.querySelectorAll(".product-item.selected").forEach((item) => {
           const index = parseInt(item.dataset.idx, 10);
@@ -200,19 +203,24 @@
         });
 
         if (selectedItems.length === 0) {
-          if (tg) {
-            tg.showAlert("Вы не выбрали ни одного закончившегося продукта!");
-          } else {
-            alert("Вы не выбрали ни одного закончившегося продукта!");
-          }
+          alert("Вы не отметили ни одного закончившегося продукта!");
           return;
         }
 
         if (tg) {
           tg.sendData(JSON.stringify(selectedItems));
           tg.close();
+        } else {
+          alert("Ошибка: страница открыта не внутри Telegram.");
         }
-      });
+      }
+
+      document
+        .getElementById("submit-data")
+        .addEventListener("click", submitOrder);
+      if (tg) {
+        tg.MainButton.onClick(submitOrder);
+      }
     </script>
   </body>
 </html>
