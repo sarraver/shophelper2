@@ -22,11 +22,10 @@
       h2 {
         font-size: 20px;
         margin-bottom: 4px;
-        color: var(--tg-theme-text-color, #333);
       }
       .subtitle {
         font-size: 14px;
-        color: var(--tg-theme-hint-color, #777);
+        color: #777;
         margin-bottom: 20px;
       }
       .category-title {
@@ -36,7 +35,6 @@
         margin-bottom: 10px;
         color: #1a73e8;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
       }
       .product-item {
         background-color: var(--tg-theme-secondary-bg-color, #ffffff);
@@ -46,20 +44,17 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
         border: 1px solid transparent;
       }
       .product-info {
         display: flex;
         flex-direction: column;
-        padding-right: 10px;
       }
       .product-name {
         font-size: 15px;
         font-weight: 500;
-        line-height: 1.3;
       }
       .product-qty {
         font-size: 12px;
@@ -74,8 +69,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-shrink: 0;
-        transition: all 0.15s ease;
       }
       .checkbox-container::after {
         content: "✕";
@@ -116,7 +109,6 @@
         font-size: 16px;
         font-weight: bold;
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
     </style>
   </head>
@@ -131,10 +123,11 @@
     </div>
 
     <script>
-      const tg = window.Telegram.WebApp;
-      tg.expand();
+      const tg = window.Telegram ? window.Telegram.WebApp : null;
+      if (tg) {
+        tg.expand();
+      }
 
-      // ВАШ СПИСОК ПРОДУКТОВ (Можете дописать сюда остальные 40 позиций по такому же шаблону)
       const rawProducts = [
         {
           name: "Молоко",
@@ -207,12 +200,18 @@
         });
 
         if (selectedItems.length === 0) {
-          tg.showAlert("Вы не выбрали ни одного закончившегося продукта!");
+          if (tg) {
+            tg.showAlert("Вы не выбрали ни одного закончившегося продукта!");
+          } else {
+            alert("Вы не выбрали ни одного закончившегося продукта!");
+          }
           return;
         }
 
-        tg.sendData(JSON.stringify(selectedItems));
-        tg.close();
+        if (tg) {
+          tg.sendData(JSON.stringify(selectedItems));
+          tg.close();
+        }
       });
     </script>
   </body>
